@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Control · Elimina el Malware</title>
+  <link rel="stylesheet" href="control.css">
+</head>
+<body>
+  <main class="controller">
+    <header>
+      <p class="eyebrow">Elimina el Malware</p>
+      <h1>Control del juego</h1>
+      <p id="connection" role="status">Conectando con la PC…</p>
+    </header>
+    <p class="hint">Mira la pantalla de la PC. Toca aquí en la misma posición que la amenaza.</p>
+    <div id="touchpad" class="touchpad" role="button" tabindex="0" aria-label="Panel táctil del juego">
+      <span class="crosshair" aria-hidden="true">+</span>
+      <span class="touch-label">TOCA PARA ELIMINAR</span>
+    </div>
+    <div class="buttons">
+      <button type="button" data-action="scan">ESCÁNER</button>
+      <button type="button" data-action="start">INICIAR</button>
+      <button type="button" data-action="next">CONTINUAR</button>
+      <button type="button" data-action="retry">REINTENTAR</button>
+    </div>
+    <div class="answer-buttons" aria-label="Respuestas de la pregunta">
+      <button type="button" data-action="answer-0">1</button>
+      <button type="button" data-action="answer-1">2</button>
+      <button type="button" data-action="answer-2">3</button>
+      <button type="button" data-action="answer-3">4</button>
+    </div>
+    <p class="hint">En las preguntas, usa los botones 1–4 según el orden de las respuestas en la PC.</p>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="control.js?v=1"></script>
+</body>
+</html>

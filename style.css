@@ -1,0 +1,1368 @@
+/* ==================================================
+   ELIMINA EL MALWARE - HOJA DE ESTILOS
+   Interfaz de centro de ciberseguridad: fondo oscuro,
+   tipografía técnica y acentos verde / azul / rojo.
+   ================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --fondo: #07110f;
+  --superficie: #0d1b18;
+  --borde: #19362f;
+  --texto: #e7f5ef;
+  --texto-sec: #91a8a0;
+  --verde: #00d99b;
+  --azul: #38bdf8;
+  --peligro: #ff5c70;
+
+  --fuente-display: 'Space Grotesk', 'Inter', sans-serif;
+  --fuente-texto: 'Inter', sans-serif;
+  --fuente-mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--fuente-texto);
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+/* ============ MOVIMIENTO REDUCIDO ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============ SISTEMA DE PANTALLAS ============ */
+.pantalla {
+  display: none;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.pantalla.activa {
+  display: block;
+}
+
+/* Pantallas de resultado (pregunta, nivel completado, derrota, victoria) se centran */
+#pantalla-nivel-completado.activa,
+#pantalla-derrota.activa,
+#pantalla-victoria.activa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* La pregunta de seguridad se dibuja como capa fija SOBRE el tablero (que
+   sigue visible y oscurecido por debajo), así no hay salto de tamaño ni de
+   scroll al pasar del juego a la pregunta. La tarjeta usa margin:auto para
+   centrarse sin recortar su parte superior en pantallas bajas. */
+#pantalla-pregunta.activa {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  min-height: 0;
+  height: 100dvh;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+    max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Velo de fondo que aparece con suavidad (el tablero ya está oscurecido) */
+#pantalla-pregunta.activa::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 17, 15, 0.6);
+  opacity: 0;
+  animation: fundido 300ms ease forwards;
+  pointer-events: none;
+}
+
+/* ============ PANTALLA INICIAL ============ */
+.marco {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 24px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Encabezado ---- */
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 6px 10px;
+  opacity: 0;
+  animation: aparecer 0.6s ease forwards;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-escudo {
+  width: 24px;
+  height: 28px;
+  color: var(--verde);
+  display: inline-flex;
+  animation: escudo-pulso 1s ease-out 0.15s both;
+}
+
+.logo-escudo svg {
+  width: 100%;
+  height: 100%;
+}
+
+.marca-nombre {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: 0.2px;
+}
+
+.etiqueta-proyecto {
+  font-family: var(--fuente-mono);
+  font-size: 0.68rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--texto-sec);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 5px 11px;
+}
+
+/* ---- Sección principal (dos columnas) ---- */
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 40px;
+  align-items: center;
+  padding-block: 30px 34px;
+}
+
+.hero-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--fuente-mono);
+  font-size: 0.74rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--peligro);
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: aparecer 0.6s ease 0.08s forwards;
+}
+
+.punto-alerta {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--peligro);
+  box-shadow: 0 0 0 3px rgba(255, 92, 112, 0.15);
+}
+
+.hero-titulo {
+  font-family: var(--fuente-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 3.6vw, 2.5rem);
+  line-height: 1.15;
+  text-wrap: balance;
+  margin-bottom: 14px;
+  opacity: 0;
+  animation: aparecer 0.6s ease 0.16s forwards;
+}
+
+.hero-descripcion {
+  color: var(--texto-sec);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  max-width: 46ch;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: aparecer 0.6s ease 0.24s forwards;
+}
+
+.boton-primario {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--verde);
+  color: #04231a;
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 13px 22px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(0, 217, 155, 0);
+  filter: brightness(1);
+  translate: 0 0;
+  transition: translate 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+  opacity: 0;
+  animation: aparecer 0.6s ease 0.32s forwards;
+}
+
+/* Nota: los estados de interacción usan la propiedad "translate"
+   (independiente de "transform") para no chocar con la animación
+   de entrada, que ya anima "transform" y fijaría su valor final. */
+
+.boton-flecha {
+  transition: transform 220ms ease;
+}
+
+/* Los efectos hover solo se activan en dispositivos con cursor real */
+@media (hover: hover) {
+  .boton-primario:hover {
+    translate: 0 -2px;
+    filter: brightness(1.08);
+    box-shadow: 0 10px 24px rgba(0, 217, 155, 0.32);
+  }
+
+  .boton-primario:hover .boton-flecha {
+    transform: translateX(5px);
+  }
+}
+
+/* Al presionar baja 1px respecto a su posición elevada en hover
+   (o dá una ligera respuesta táctil si no hubo hover previo, como en celular) */
+.boton-primario:active {
+  translate: 0 -1px;
+  filter: brightness(1.05);
+}
+
+.boton-primario:focus-visible {
+  outline: 2px solid var(--verde);
+  outline-offset: 3px;
+}
+
+.hero-indicadores {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  opacity: 0;
+  animation: aparecer 0.6s ease 0.4s forwards;
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.indicador-valor {
+  font-family: var(--fuente-mono);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.indicador-etiqueta {
+  font-family: var(--fuente-mono);
+  font-size: 0.66rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--texto-sec);
+}
+
+/* ---- Ilustración del servidor ---- */
+.hero-ilustracion {
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  animation: aparecer 0.6s ease 0.22s forwards;
+}
+
+.servidor-panel {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 22px;
+  overflow: hidden;
+}
+
+.servidor-linea-escaneo {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 6%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--azul) 30%, var(--verde) 70%, transparent);
+  opacity: 0;
+  animation: escaneo 4.5s ease-in-out infinite;
+}
+
+.servidor-bahias {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.bahia {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(231, 245, 239, 0.02);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.bahia-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.bahia-led.verde {
+  background: var(--verde);
+  box-shadow: 0 0 6px rgba(0, 217, 155, 0.6);
+}
+
+.bahia-led.azul {
+  background: var(--azul);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.55);
+}
+
+.bahia-led.apagado {
+  background: #24413a;
+}
+
+.bahia-texto {
+  font-family: var(--fuente-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+  color: var(--texto-sec);
+}
+
+.servidor-estado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--fuente-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--texto-sec);
+  border-top: 1px solid var(--borde);
+  padding-top: 14px;
+}
+
+.estado-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--verde);
+  animation: respirar 2.4s ease-in-out infinite;
+}
+
+/* ---- Tarjetas de instrucciones ---- */
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-block: 6px 30px;
+}
+
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  animation: tarjeta-aparecer 0.55s ease forwards;
+  translate: 0 0;
+  transition: translate 250ms ease, border-color 250ms ease,
+    box-shadow 250ms ease, background-color 250ms ease;
+}
+
+.tarjeta:nth-child(1) { animation-delay: 0.15s; }
+.tarjeta:nth-child(2) { animation-delay: 0.28s; }
+.tarjeta:nth-child(3) { animation-delay: 0.41s; }
+
+.tarjeta-icono {
+  width: 30px;
+  height: 30px;
+  color: var(--azul);
+  transition: transform 250ms ease;
+}
+
+.tarjeta-titulo {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  font-size: 1.02rem;
+  transition: color 250ms ease;
+}
+
+/* Los efectos hover solo se activan en dispositivos con cursor real */
+@media (hover: hover) {
+  .tarjeta:hover {
+    translate: 0 -5px;
+    border-color: var(--verde);
+    box-shadow: 0 14px 28px rgba(0, 217, 155, 0.12);
+    background-color: #10241f;
+  }
+
+  .tarjeta:hover .tarjeta-icono {
+    transform: scale(1.08);
+  }
+
+  .tarjeta:hover .tarjeta-titulo {
+    color: var(--verde);
+  }
+}
+
+/* Respuesta visual breve al tocar en pantallas táctiles */
+.tarjeta:active {
+  translate: 0 -2px;
+  border-color: var(--verde);
+}
+
+.tarjeta-texto {
+  color: var(--texto-sec);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* ---- Integrantes ---- */
+.footer-integrantes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--borde);
+  font-family: var(--fuente-mono);
+  font-size: 0.76rem;
+}
+
+.footer-etiqueta {
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--texto-sec);
+}
+
+.footer-nombres {
+  color: var(--texto);
+}
+
+.footer-nombres .sep {
+  color: var(--borde);
+  margin: 0 8px;
+}
+
+/* ============ PANTALLAS DE RESULTADO ============ */
+.panel {
+  width: 100%;
+  max-width: 420px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 38px 30px;
+  text-align: center;
+}
+
+.panel-icono {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 18px;
+}
+
+.icono-verde { color: var(--verde); }
+.icono-peligro { color: var(--peligro); }
+
+.panel-titulo {
+  font-family: var(--fuente-display);
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.panel-texto {
+  color: var(--texto-sec);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.panel-puntaje {
+  font-family: var(--fuente-mono);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--texto);
+  margin-bottom: 26px;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel .boton-primario {
+  opacity: 1;
+  animation: none;
+  width: 100%;
+  justify-content: center;
+}
+
+/* ============ PREGUNTA DE SEGURIDAD (tras derrotar al jefe) ============ */
+.panel-pregunta {
+  position: relative;
+  max-width: 480px;
+  margin: auto;
+  text-align: left;
+  opacity: 0;
+  /* Entrada: desvanecimiento + pequeño movimiento hacia arriba (350 ms) */
+  animation: pregunta-entrada 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes pregunta-entrada {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes opcion-entrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pregunta-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pregunta-etiqueta {
+  font-family: var(--fuente-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--azul);
+}
+
+.pregunta-contador {
+  font-family: var(--fuente-mono);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+  min-width: 1.6em;
+  text-align: right;
+}
+
+.pregunta-tiempo {
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--borde);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.pregunta-tiempo-barra {
+  width: 100%;
+  height: 100%;
+  background: var(--azul);
+  transform-origin: left;
+}
+
+.pregunta-tiempo-barra.en-marcha {
+  width: 0%;
+  transition: width 10s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pregunta-tiempo-barra.en-marcha {
+    transition-duration: 0.01ms;
+  }
+}
+
+.titulo-pregunta {
+  text-align: left;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  margin-bottom: 18px;
+}
+
+.opciones-pregunta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.opcion-pregunta {
+  /* Oculta hasta su turno de entrada (el retardo escalonado de 50 ms lo
+     pone game.js con animation-delay). Hasta que todas están listas no
+     reciben toques, para evitar clics heredados del último golpe al jefe. */
+  opacity: 0;
+  animation: opcion-entrada 240ms ease-out forwards;
+  pointer-events: none;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
+  background: rgba(231, 245, 239, 0.03);
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  font-size: 0.92rem;
+  text-align: left;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease, translate 150ms ease;
+}
+
+@media (hover: hover) {
+  .opcion-pregunta:hover:not(:disabled) {
+    border-color: var(--azul);
+    background: rgba(56, 189, 248, 0.1);
+  }
+}
+
+.opcion-pregunta:active:not(:disabled) {
+  translate: 0 1px;
+}
+
+.opcion-pregunta:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+}
+
+.opcion-pregunta.lista {
+  pointer-events: auto;
+}
+
+.opcion-pregunta:disabled {
+  cursor: default;
+}
+
+.opcion-pregunta.opcion-correcta {
+  border-color: var(--verde);
+  background: rgba(0, 217, 155, 0.16);
+}
+
+.opcion-pregunta.opcion-incorrecta {
+  border-color: var(--peligro);
+  background: rgba(255, 92, 112, 0.16);
+}
+
+.texto-explicacion-pregunta {
+  color: var(--texto-sec);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 16px 0 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--borde);
+  opacity: 0;
+  animation: aparecer 300ms ease forwards;
+}
+
+.boton-pregunta {
+  opacity: 0;
+  animation: aparecer 300ms ease forwards;
+}
+
+/* La regla ".boton-primario { display: inline-flex }" es de origen "autor"
+   y le gana en cascada al estilo nativo "[hidden] { display: none }" (de
+   origen "user agent"), así que sin esto el botón "Continuar" se vería
+   aunque tenga el atributo "hidden". Lo mismo con la explicación, por si
+   alguna regla futura le agrega un "display" propio. */
+#btn-continuar-pregunta[hidden],
+#texto-explicacion-pregunta[hidden] {
+  display: none;
+}
+
+/* ============ TARJETA "NIVEL SUPERADO" (secuencia animada) ============ */
+.panel-nivel-completado {
+  opacity: 0;
+  transform: translateY(24px) scale(0.85);
+  animation: nivel-entrada 450ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.panel-nivel-completado.saliendo {
+  animation: none;
+  transition: opacity 200ms ease;
+  opacity: 0;
+}
+
+@keyframes nivel-entrada {
+  from { opacity: 0; transform: translateY(24px) scale(0.85); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.icono-logro-circulo,
+.icono-logro-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: logro-trazo 350ms ease-out forwards;
+}
+
+.icono-logro-circulo { animation-delay: 60ms; }
+.icono-logro-check { animation-delay: 260ms; }
+
+@keyframes logro-trazo {
+  to { stroke-dashoffset: 0; }
+}
+
+.titulo-logro,
+.texto-logro {
+  opacity: 0;
+  animation: aparecer 350ms ease forwards;
+}
+.titulo-logro { animation-delay: 300ms; }
+.texto-logro { animation-delay: 340ms; }
+
+.puntaje-logro {
+  opacity: 0;
+  animation: aparecer 300ms ease forwards;
+  animation-delay: 380ms;
+}
+
+.puntaje-unidad {
+  font-size: 0.75em;
+  color: var(--texto-sec);
+}
+
+.boton-logro {
+  animation: aparecer 300ms ease 420ms both !important;
+}
+
+/* Con movimiento reducido, la secuencia se reduce a simples cambios de opacidad */
+@media (prefers-reduced-motion: reduce) {
+  .panel-nivel-completado {
+    transform: none;
+    animation: fundido 200ms ease forwards;
+  }
+  .icono-logro-circulo,
+  .icono-logro-check {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    animation: fundido 200ms ease forwards;
+  }
+  .titulo-logro, .texto-logro, .puntaje-logro, .boton-logro {
+    animation-name: fundido !important;
+    animation-duration: 200ms !important;
+  }
+}
+
+@keyframes fundido {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============ ENTRADA DE "DERROTA" Y "VICTORIA" ============
+   Mismo lenguaje visual que la tarjeta de "Nivel superado" (ícono que se
+   dibuja, textos con aparición escalonada), con un cierre propio para
+   cada resultado: Derrota se asienta con una leve sacudida; Victoria
+   termina con un pequeño "rebote" de triunfo. */
+.panel-derrota {
+  opacity: 0;
+  transform: translateY(24px) scale(0.85);
+  animation: derrota-entrada 650ms cubic-bezier(0.3, 1, 0.6, 1) forwards;
+}
+
+@keyframes derrota-entrada {
+  0% { opacity: 0; transform: translateY(24px) scale(0.85); }
+  55% { opacity: 1; transform: translateY(0) scale(1); }
+  68% { opacity: 1; transform: translateY(0) scale(1) translateX(-6px); }
+  80% { opacity: 1; transform: translateY(0) scale(1) translateX(5px); }
+  90% { opacity: 1; transform: translateY(0) scale(1) translateX(-3px); }
+  100% { opacity: 1; transform: translateY(0) scale(1) translateX(0); }
+}
+
+.panel-victoria {
+  max-width: 620px;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateY(24px) scale(0.85);
+  animation: victoria-entrada 550ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Formulario y clasificación global disponibles tras la victoria final. */
+.formulario-gamertag {
+  padding: 18px 0;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+  text-align: left;
+}
+
+.formulario-gamertag label,
+.clasificacion h2 {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--texto);
+  font-family: var(--fuente-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.gamertag-controles {
+  display: flex;
+  gap: 8px;
+}
+
+#campo-gamertag {
+  min-width: 0;
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  outline: none;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--fuente-mono);
+  font-size: 0.85rem;
+}
+
+#campo-gamertag::placeholder { color: var(--texto-sec); }
+
+#campo-gamertag:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+#campo-gamertag:disabled { opacity: 0.65; }
+
+.boton-guardar {
+  min-height: 44px;
+  padding: 9px 16px;
+  border: 1px solid var(--verde);
+  border-radius: 8px;
+  background: rgba(0, 217, 155, 0.12);
+  color: var(--verde);
+  font-family: var(--fuente-texto);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton-guardar:focus-visible {
+  outline: 2px solid var(--verde);
+  outline-offset: 2px;
+}
+
+.boton-guardar:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mensaje-gamertag {
+  min-height: 18px;
+  margin-top: 7px;
+  color: var(--texto-sec);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.mensaje-gamertag.exito { color: var(--verde); }
+.mensaje-gamertag.error { color: var(--peligro); }
+.mensaje-gamertag.info { color: var(--azul); }
+
+.clasificacion {
+  margin: 18px 0 20px;
+  text-align: left;
+}
+
+.tabla-registros-contenedor {
+  overflow-x: auto;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+
+.tabla-registros {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--fuente-mono);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabla-registros th,
+.tabla-registros td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--borde);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tabla-registros th {
+  background: rgba(0, 217, 155, 0.06);
+  color: var(--texto-sec);
+  font-size: 0.64rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.tabla-registros td:nth-child(3),
+.tabla-registros th:nth-child(3) { text-align: right; }
+
+.tabla-registros tbody tr:last-child td { border-bottom: 0; }
+.tabla-registros .registro-actual td { color: var(--verde); }
+.tabla-registros .tabla-vacia { color: var(--texto-sec); text-align: center; }
+
+.panel-victoria .boton-resultado { margin-top: 0; }
+
+@keyframes victoria-entrada {
+  0% { opacity: 0; transform: translateY(24px) scale(0.85); }
+  70% { opacity: 1; transform: translateY(0) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.icono-resultado-trazo-1,
+.icono-resultado-trazo-2 {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: logro-trazo 350ms ease-out forwards;
+}
+.icono-resultado-trazo-1 { animation-delay: 80ms; }
+.icono-resultado-trazo-2 { animation-delay: 280ms; }
+
+/* Destello del ícono al terminar de dibujarse: rojo en derrota, verde en victoria */
+.panel-derrota .panel-icono {
+  animation: pulso-peligro 700ms ease-out 420ms;
+}
+
+.panel-victoria .panel-icono {
+  animation: pulso-victoria 700ms ease-out 420ms;
+}
+
+@keyframes pulso-peligro {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 92, 112, 0)); }
+  45% { filter: drop-shadow(0 0 10px rgba(255, 92, 112, 0.75)); }
+}
+
+@keyframes pulso-victoria {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(0, 217, 155, 0)); }
+  45% { filter: drop-shadow(0 0 10px rgba(0, 217, 155, 0.7)); }
+}
+
+.titulo-resultado,
+.texto-resultado {
+  opacity: 0;
+  animation: aparecer 350ms ease forwards;
+}
+.titulo-resultado { animation-delay: 320ms; }
+.texto-resultado { animation-delay: 360ms; }
+
+.puntaje-resultado {
+  opacity: 0;
+  animation: aparecer 300ms ease forwards;
+  animation-delay: 400ms;
+}
+
+.boton-resultado {
+  animation: aparecer 300ms ease 440ms both !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-derrota,
+  .panel-victoria {
+    transform: none;
+    animation: fundido 200ms ease forwards;
+  }
+  .icono-resultado-trazo-1,
+  .icono-resultado-trazo-2 {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    animation: fundido 200ms ease forwards;
+  }
+  .panel-derrota .panel-icono,
+  .panel-victoria .panel-icono {
+    animation: none;
+  }
+  .titulo-resultado, .texto-resultado, .puntaje-resultado, .boton-resultado {
+    animation-name: fundido !important;
+    animation-duration: 200ms !important;
+  }
+}
+
+/* ============ TRANSICIÓN ENTRE NIVELES ============ */
+#pantalla-transicion.activa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transicion-panel {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 30px 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.transicion-linea-escaneo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--azul) 30%, var(--verde) 70%, transparent);
+  animation: transicion-escaneo 900ms ease-in-out infinite;
+}
+
+@keyframes transicion-escaneo {
+  0% { top: 0; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.transicion-texto {
+  font-family: var(--fuente-mono);
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--texto-sec);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transicion-linea-escaneo {
+    animation: none;
+    opacity: 0.5;
+    top: 50%;
+  }
+}
+
+/* ============ PANTALLA DE JUEGO ============ */
+#pantalla-juego {
+  padding: 0;
+}
+
+#pantalla-juego.activa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#contenedor-phaser {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  line-height: 0;
+}
+
+#contenedor-phaser canvas {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+  border: 1px solid var(--borde);
+  image-rendering: auto;
+}
+
+.barra-escaner {
+  width: 100%;
+  max-width: 1120px;
+  margin: 20px auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+.boton-escaner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 9px 14px;
+  background: rgba(13, 27, 24, 0.85);
+  border: 1px solid var(--azul);
+  border-radius: 8px;
+  color: var(--texto);
+  font-family: var(--fuente-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.boton-escaner:hover {
+  background: rgba(56, 189, 248, 0.18);
+}
+
+.boton-escaner:active {
+  transform: scale(0.96);
+}
+
+.boton-escaner:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.boton-escaner-icono {
+  width: 16px;
+  height: 16px;
+  color: var(--azul);
+  flex: none;
+}
+
+@media (max-width: 480px) {
+  .barra-escaner {
+    margin-top: 8px;
+  }
+
+  .boton-escaner {
+    padding: 8px 10px;
+    font-size: 0.66rem;
+  }
+}
+
+/* ============ VISTA MÓVIL (≤768px) ============
+   El tablero deja de usar el límite de escritorio y ocupa el
+   ancho y el alto disponibles del teléfono, tomando en cuenta las barras
+   de Safari y las áreas seguras del dispositivo. Phaser calcula un mundo
+   lógico acorde a esta pantalla (ver game.js: calcularDimensionesLogicas),
+   así que el canvas conserva su proporción real y nunca se estira ni se
+   deforma. Se activa por ancho O por alto (no solo por ancho) para que un
+   teléfono siga tratándose como móvil también en horizontal, donde su
+   ancho crece más allá de 768px pero su alto sigue siendo angosto.
+   La clase .vista-movil la pone game.js usando una sola detección robusta
+   para CSS y JavaScript; esto evita diferencias de hover/pointer en Safari. */
+html.vista-movil #pantalla-juego.activa {
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    justify-content: flex-start;
+    padding-top: max(10px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(10px, env(safe-area-inset-left, 0px));
+    padding-right: max(10px, env(safe-area-inset-right, 0px));
+}
+
+html.vista-movil #contenedor-phaser {
+    width: 100%;
+    max-width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+html.vista-movil #contenedor-phaser canvas {
+    /* Ambas dimensiones quedan automáticas para conservar la proporción
+       intrínseca del canvas. Antes width:100% + max-height:100% reducía
+       solo la altura al girar el teléfono y deformaba todo el tablero. */
+    box-sizing: content-box;
+    width: auto !important;
+    height: auto !important;
+    max-height: calc(100% - 2px);
+    max-width: calc(100% - 2px);
+}
+
+html.vista-movil .barra-escaner {
+    max-width: 100%;
+    flex: 0 0 auto;
+}
+
+/* ============ ANIMACIONES ============ */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tarjeta-aparecer {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes escudo-pulso {
+  0% { transform: scale(0.85); filter: drop-shadow(0 0 0 rgba(0, 217, 155, 0)); }
+  60% { transform: scale(1.08); filter: drop-shadow(0 0 10px rgba(0, 217, 155, 0.55)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 3px rgba(0, 217, 155, 0.25)); }
+}
+
+@keyframes escaneo {
+  0% { top: 6%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 92%; opacity: 0; }
+}
+
+@keyframes respirar {
+  0%, 100% { opacity: 0.55; box-shadow: 0 0 0 rgba(0, 217, 155, 0); }
+  50% { opacity: 1; box-shadow: 0 0 8px rgba(0, 217, 155, 0.5); }
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-block: 20px 26px;
+  }
+
+  .hero-texto {
+    align-items: flex-start;
+  }
+
+  .hero-ilustracion {
+    order: -1;
+  }
+
+  .servidor-panel {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 700px) {
+  .tarjetas {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .marco {
+    padding: 16px 16px 32px;
+  }
+
+  .hero-titulo {
+    font-size: 1.7rem;
+  }
+
+  .hero-indicadores {
+    gap: 20px;
+  }
+
+  .panel {
+    padding: 28px 20px;
+  }
+
+  #pantalla-victoria.activa {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .panel-victoria {
+    max-height: calc(100dvh - 24px);
+    padding: 24px 16px;
+  }
+
+  .gamertag-controles {
+    flex-direction: column;
+  }
+
+  .boton-guardar {
+    width: 100%;
+  }
+
+  .tabla-registros th,
+  .tabla-registros td {
+    padding: 8px 7px;
+    font-size: 0.65rem;
+  }
+}
+
+/* Gamertag ya guardado en este dispositivo: no se muestra el campo ni se
+   puede cambiar. Solo se ve el mensaje de estado y, si falló el envío
+   automático, el botón "Reintentar". */
+.formulario-gamertag.gamertag-fijo label,
+.formulario-gamertag.gamertag-fijo #campo-gamertag,
+.formulario-gamertag.gamertag-fijo .gamertag-controles {
+  display: none;
+}
+
+.formulario-gamertag.gamertag-fijo.reintentar .gamertag-controles {
+  display: flex;
+  margin-top: 10px;
+}
+
+.formulario-gamertag.gamertag-fijo .mensaje-gamertag {
+  margin-top: 0;
+}
+
+/* ============ CÓDIGO QR ============ */
+.qr-bloque {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 18px;
+  font-family: var(--fuente-mono);
+}
+
+.qr-img {
+  flex: none;
+  width: 192px;
+  height: 192px;
+  border-radius: 8px;
+  background: #fff;
+}
+.qr-img { padding: 5px; }
+.qr-img img, .qr-img canvas { display: block; width: 100%; height: 100%; }
+.estado-control { color: var(--verde, #00d99b); }
+.dialogo-control { width: min(90vw, 360px); padding: 28px; border: 1px solid #246353; border-radius: 18px; background: #0d1b18; color: #e7f5ef; text-align: center; }
+.dialogo-control::backdrop { background: #000b; }
+.dialogo-control .qr-img { margin: 16px auto; }
+.dialogo-control p { color: #91a8a0; line-height: 1.5; }
+.cerrar-control { position: absolute; right: 12px; top: 8px; border: 0; background: none; color: inherit; font-size: 1.6rem; cursor: pointer; }
+
+.qr-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.76rem;
+  min-width: 0;
+}
+
+.qr-titulo {
+  color: var(--texto);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.qr-sub {
+  opacity: 0.7;
+}
+
+.qr-enlace {
+  color: inherit;
+  overflow-wrap: anywhere;
+}
