@@ -44,33 +44,20 @@
   const channel = client.channel(`control-${token}`);
   let subscribed = false;
   let lastPhone = 0;
-  let lastTap = 0;
+  let lastAttack = 0;
+  let lastState = '';
+  let lastStateSent = 0;
+  const gameState = () => ({ screen: currentScreen(), ...window.controlJuego?.estado() });
+  const sendState = () => send('state', gameState());
 
   const send = (event, payload = {}) => {
     if (subscribed) channel.send({ type: 'broadcast', event, payload });
   };
 
   function currentScreen() {
+    // La pregunta es una capa sobre el tablero; tiene prioridad aunque ambos estén activos.
+    if (document.getElementById('pantalla-pregunta')?.classList.contains('activa')) return 'pantalla-pregunta';
     return document.querySelector('.pantalla.activa')?.id || 'pantalla-inicio';
-  }
-
-  function pressCanvas(x, y) {
-    if (currentScreen() !== 'pantalla-juego') return;
-    if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > 1 || y < 0 || y > 1) return;
-    if (Date.now() - lastTap < 100) return;
-    lastTap = Date.now();
-    const canvas = document.querySelector('#contenedor-phaser canvas');
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const clientX = rect.left + x * rect.width;
-    const clientY = rect.top + y * rect.height;
-    for (const type of ['pointerdown', 'pointerup']) {
-      canvas.dispatchEvent(new PointerEvent(type, {
-        bubbles: true, pointerId: 1, pointerType: 'mouse', isPrimary: true,
-        button: 0, buttons: type === 'pointerdown' ? 1 : 0,
-        clientX, clientY,
-      }));
-    }
   }
 
   const buttons = {
@@ -90,6 +77,8 @@
     }
     if (action === 'retry' && currentScreen() === 'pantalla-victoria') action = 'again';
     if (action === 'next' && currentScreen() === 'pantalla-pregunta') action = 'continue';
+    const allowed = { start: 'pantalla-inicio', scan: 'pantalla-juego', next: 'pantalla-nivel-completado', retry: 'pantalla-derrota', again: 'pantalla-victoria', continue: 'pantalla-pregunta' };
+    if (allowed[action] !== currentScreen()) return;
     const id = buttons[action];
     if (id) document.getElementById(id)?.click();
   }
@@ -98,11 +87,20 @@
     .on('broadcast', { event: 'hello' }, () => {
       lastPhone = Date.now();
       showStatus('Teléfono conectado');
-      send('state', { screen: currentScreen() });
+      sendState();
     })
     .on('broadcast', { event: 'ping' }, () => { lastPhone = Date.now(); })
-    .on('broadcast', { event: 'tap' }, ({ payload }) => {
-      if (Date.now() - lastPhone < 7000) pressCanvas(payload?.x, payload?.y);
+    .on('broadcast', { event: 'move' }, ({ payload }) => {
+      if (Date.now() - lastPhone >= 7000 || currentScreen() !== 'pantalla-juego') return;
+      if (!Number.isFinite(payload?.x) || !Number.isFinite(payload?.y) || Math.abs(payload.x) > 1 || Math.abs(payload.y) > 1) return;
+      window.controlJuego?.mover(payload.x, payload.y);
+    })
+    .on('broadcast', { event: 'attack' }, ({ payload }) => {
+      if (Date.now() - lastPhone >= 7000 || currentScreen() !== 'pantalla-juego') return;
+      if (!['A', 'B', 'X', 'Y'].includes(payload?.letter) || Date.now() - lastAttack < 110) return;
+      lastAttack = Date.now();
+      window.controlJuego?.atacar(payload.letter);
+      sendState();
     })
     .on('broadcast', { event: 'button' }, ({ payload }) => {
       if (Date.now() - lastPhone < 7000) pressButton(payload?.action);
@@ -118,8 +116,15 @@
   setInterval(() => {
     if (lastPhone && Date.now() - lastPhone > 7000) {
       lastPhone = 0;
+      window.controlJuego?.mover(0, 0);
       showStatus('Teléfono desconectado. Vuelve a escanear el QR.');
     }
-    send('state', { screen: currentScreen() });
-  }, 2000);
+    const nextState = gameState();
+    const serialized = JSON.stringify(nextState);
+    if (serialized !== lastState || Date.now() - lastStateSent > 2000) {
+      send('state', nextState);
+      lastState = serialized;
+      lastStateSent = Date.now();
+    }
+  }, 200);
 })();

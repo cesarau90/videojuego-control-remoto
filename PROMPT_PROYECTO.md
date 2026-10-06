@@ -528,6 +528,36 @@ puntaje es mayor. Si el nombre escrito la primera vez ya tiene un récord igual
 o mayor, no se guarda ni se recuerda y se puede probar con otro. No se guarda
 ninguna contraseña ni clave secreta.
 
+## 12. Mando remoto responsive
+
+El teléfono muestra el mando en `control.html`, con estilos en
+`control.css` y controles en `control.js`. Debe funcionar en vertical y
+horizontal conservando las acciones y la conexión existentes.
+
+`remote-host.js` recibe las acciones en la PC. La pregunta de seguridad es
+una capa sobre el tablero: si ambos están activos, se anuncia la pregunta
+primero para que el mando muestre las respuestas y pueda continuar.
+Las referencias actuales son `control.css?v=3`, `control.js?v=3`,
+`game.js?v=22` y `remote-host.js?v=3`; incrementar la versión al modificarlos.
+
+- En horizontal con hasta **600 px de alto**, colocar el joystick a la
+  izquierda, los botones **A/B/X/Y** a la derecha y los avisos, la
+  combinación del jefe y las respuestas 1–4 en el centro. Las tabletas
+  con mayor altura mantienen la distribución amplia original. Compactar la
+  cabecera y las acciones para aprovechar el alto sin tapar los controles.
+- Usar el alto disponible con `100dvh` y respaldo `100vh`; respetar
+  `env(safe-area-inset-*)` para las muescas y la barra del sistema.
+- Mantener cada botón de letra en al menos **44×44 px**. Permitir que las
+  combinaciones ocupen varias filas y que los textos largos se ajusten al
+  ancho, sin scroll horizontal. En alturas extremas permitir scroll
+  vertical para acceder a todo.
+- Soltar el joystick y detener la mira al rotar o redimensionar, sin
+  conservar las coordenadas del toque anterior.
+- Revisar 568×320, 667×375, 740×360, 844×390 y 932×430, además de teléfonos
+  en vertical. Probar conexión, partida, jefe, avisos largos y preguntas;
+  confirmar que las letras y las respuestas son accesibles y que girar
+  con el dedo sobre el joystick deja la mira en reposo.
+
 ## Reglas de trabajo durante todo el proyecto
 
 - Inspeccionar siempre el código actual antes de modificarlo; nunca

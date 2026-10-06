@@ -118,7 +118,7 @@
             <path d="M5 3 L19 12 L12.5 13.2 L15.5 19.5 L13 20.5 L10 14.3 L6.5 17.5 Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
           </svg>
           <h2 class="tarjeta-titulo">Elimina</h2>
-          <p class="tarjeta-texto">Haz clic antes de que termine el tiempo.</p>
+          <p class="tarjeta-texto">Mueve la mira y pulsa A, B, X o Y según el color.</p>
         </article>
 
         <article class="tarjeta">
@@ -140,7 +140,7 @@
         <div id="qr-control" class="qr-img"></div>
         <div class="qr-texto">
           <strong class="qr-titulo">Usa tu teléfono como control</strong>
-          <span class="qr-sub">Escanea este QR y toca el panel del teléfono mientras miras la PC.</span>
+          <span class="qr-sub">Escanea el QR: joystick para mover la mira y A, B, X, Y para atacar.</span>
           <span id="estado-control" class="estado-control" role="status">Preparando conexión…</span>
           <a id="enlace-control" class="qr-enlace" href="#">Abrir control</a>
         </div>
@@ -168,7 +168,7 @@
     <button id="btn-cerrar-qr" class="cerrar-control" type="button" aria-label="Cerrar">×</button>
     <h2>Conectar teléfono</h2>
     <div id="qr-control-dialogo" class="qr-img"></div>
-    <p>Escanea el QR. El teléfono será un panel táctil para la PC.</p>
+    <p>Escanea el QR. Usa el joystick y los botones A, B, X, Y mientras miras la PC.</p>
     <p id="estado-control-dialogo" role="status"></p>
   </dialog>
 
@@ -308,7 +308,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Lógica del juego -->
-  <script src="game.js?v=21"></script>
-  <script src="remote-host.js?v=1"></script>
+  <script src="game.js?v=22"></script>
+  <script src="remote-host.js?v=3"></script>
 </body>
 </html>
